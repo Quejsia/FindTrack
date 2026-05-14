@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>FindTrack — Sign Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      background: #060f1e;
+      display: flex; align-items: center; justify-content: center;
+      color: white; padding: 20px;
+    }
+    .bg-scene { position: fixed; inset: 0; z-index: 0; background: linear-gradient(145deg, #060f1e 0%, #0c1f3a 50%, #060f1e 100%); }
+    .bg-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; }
+    .bg-orb:nth-child(1) { width: 500px; height: 500px; background: radial-gradient(circle, #10b981, transparent); top: -200px; left: -100px; }
+    .bg-orb:nth-child(2) { width: 400px; height: 400px; background: radial-gradient(circle, #0ea5e9, transparent); bottom: -150px; right: -100px; }
+    .bg-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); background-size: 60px 60px; }
+
+    .auth-wrap { position: relative; z-index: 1; width: 100%; max-width: 440px; animation: fadeUp 0.6s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+    .auth-logo { text-align: center; margin-bottom: 28px; }
+    .auth-logo-icon { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #0ea5e9, #10b981); display: inline-flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 8px 32px rgba(14,165,233,0.4); margin-bottom: 12px; }
+    .auth-logo h1 { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 800; }
+    .auth-logo p { color: rgba(255,255,255,0.4); font-size: 13.5px; margin-top: 3px; }
+
+    .auth-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 32px; backdrop-filter: blur(30px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .card-title { font-family: 'Sora', sans-serif; font-size: 21px; font-weight: 700; margin-bottom: 4px; }
+    .card-sub { color: rgba(255,255,255,0.4); font-size: 13.5px; margin-bottom: 24px; }
+
+    .fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media(max-width:480px) { .fields-row { grid-template-columns: 1fr; } }
+
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.55); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px; }
+    .field-wrap { position: relative; }
+    .field-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 15px; opacity: 0.45; pointer-events: none; }
+    .field input {
+      width: 100%; background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 11px;
+      color: white; font-size: 14px; font-family: 'DM Sans', sans-serif; padding: 12px 12px 12px 40px;
+      transition: all 0.2s; outline: none;
+    }
+    .field input::placeholder { color: rgba(255,255,255,0.22); }
+    .field input:focus { border-color: #0ea5e9; background: rgba(14,165,233,0.08); box-shadow: 0 0 0 3px rgba(14,165,233,0.12); }
+    .field input.error { border-color: #f87171; background: rgba(248,113,113,0.07); }
+    .field-err { color: #fca5a5; font-size: 11.5px; margin-top: 4px; display: none; }
+    .field-err.show { display: block; }
+
+/* ── ANIMATED EYE ── */
+    .eye-btn {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      padding: 4px; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; transition: background 0.2s; color: rgba(255,255,255,0.4);
+    }
+    .eye-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); }
+    .eye-svg { width: 20px; height: 20px; overflow: visible; }
+    .eye-iris { transition: r 0.25s cubic-bezier(.34,1.56,.64,1), opacity 0.2s; }
+    .eye-slash {
+      opacity: 0; stroke-dasharray: 30; stroke-dashoffset: 30;
+      transition: stroke-dashoffset 0.3s ease, opacity 0.2s;
+    }
+    .eye-btn.closed .eye-slash { opacity: 1; stroke-dashoffset: 0; }
+    .eye-btn.closed .eye-iris  { r: 0; opacity: 0; }
+
+    .pass-strength { margin-top: 6px; }
+    .strength-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    .strength-fill { height: 100%; border-radius: 2px; transition: width 0.3s, background 0.3s; width: 0%; }
+    .strength-text { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 4px; }
+
+    .btn-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, #0ea5e9, #0d9488); border: none; border-radius: 12px; color: white; font-size: 15px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 6px; box-shadow: 0 6px 24px rgba(14,165,233,0.35); transition: all 0.25s; }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(14,165,233,0.5); }
+
+    .auth-footer { text-align: center; margin-top: 20px; font-size: 13.5px; color: rgba(255,255,255,0.4); }
+    .auth-footer a { color: #38bdf8; text-decoration: none; font-weight: 600; }
+    .auth-footer a:hover { color: #7dd3fc; }
+
+    .back-link { text-align: center; margin-bottom: 18px; }
+    .back-link a { color: rgba(255,255,255,0.3); font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: color 0.2s; }
+    .back-link a:hover { color: rgba(255,255,255,0.6); }
+
+    .toast { position: fixed; top: 20px; right: 20px; background: rgba(30,40,60,0.95); border: 1px solid rgba(255,255,255,0.12); color: white; padding: 13px 18px; border-radius: 13px; font-size: 14px; font-weight: 500; display: none; align-items: center; gap: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.4); backdrop-filter: blur(20px); z-index: 999; max-width: 320px; }
+    .toast.show { display: flex; animation: slideIn 0.3s ease; }
+    .toast.success { border-color: rgba(16,185,129,0.4); }
+    .toast.fail { border-color: rgba(248,113,113,0.4); }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+  </style>
+</head>
+<body>
+  <div class="bg-scene">
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <div class="auth-wrap">
+    <div class="back-link"><a href="index.html">← Back to home</a></div>
+
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🔎</div>
+      <h1>FindTrack</h1>
+      <p>Campus Lost &amp; Found System</p>
+    </div>
+
+    <div class="auth-card">
+      <div class="card-title">Create your account ✨</div>
+      <div class="card-sub">Join thousands of students on campus</div>
+
+      <form id="signupForm" novalidate>
+        <div class="fields-row">
+          <div class="field">
+            <label>First Name</label>
+            <div class="field-wrap">
+              <span class="field-icon">👤</span>
+              <input id="signupFirst" type="text" placeholder="Juan" autocomplete="given-name"/>
+            </div>
+            <div class="field-err" id="firstErr">Required</div>
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <div class="field-wrap">
+              <span class="field-icon">👤</span>
+              <input id="signupLast" type="text" placeholder="Dela Cruz" autocomplete="family-name"/>
+            </div>
+            <div class="field-err" id="lastErr">Required</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Email Address</label>
+          <div class="field-wrap">
+            <span class="field-icon">✉️</span>
+            <input id="signupEmail" type="email" placeholder="you@example.com" autocomplete="email"/>
+          </div>
+          <div class="field-err" id="emailErr">Please enter a valid email address</div>
+        </div>
+
+        <div class="field">
+          <label>Phone Number <span style="opacity:.4;font-size:10px;text-transform:none;">(optional)</span></label>
+          <div class="field-wrap">
+            <span class="field-icon">📱</span>
+            <input id="signupContact" type="tel" placeholder="+63 912 345 6789" autocomplete="tel"/>
+          </div>
+          <div class="field-err" id="contactErr">Must be at least 10 digits</div>
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <div class="field-wrap">
+            <span class="field-icon">🔒</span>
+            <input id="signupPass" type="password" placeholder="Min. 6 characters" autocomplete="new-password"/>
+            <button type="button" class="toggle-pass" id="togglePassBtn" aria-label="Toggle password"></button>
+          </div>
+          <div class="pass-strength">
+            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+            <div class="strength-text" id="strengthText">Enter a password</div>
+          </div>
+          <div class="field-err" id="passErr">Password must be at least 6 characters</div>
+        </div>
+
+        <button type="submit" class="btn-submit">📝 Create Account</button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Sign in →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Password strength indicator
+    document.getElementById('signupPass').addEventListener('input', function() {
+      const val = this.value;
+      const fill = document.getElementById('strengthFill');
+      const text = document.getElementById('strengthText');
+      let strength = 0;
+      if (val.length >= 6) strength++;
+      if (val.length >= 10) strength++;
+      if (/[A-Z]/.test(val)) strength++;
+      if (/[0-9]/.test(val)) strength++;
+      if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+      const levels = [
+        { w: '0%', c: 'transparent', t: 'Enter a password' },
+        { w: '20%', c: '#f87171', t: 'Too weak' },
+        { w: '40%', c: '#fb923c', t: 'Weak' },
+        { w: '65%', c: '#fbbf24', t: 'Fair' },
+        { w: '85%', c: '#34d399', t: 'Good' },
+        { w: '100%', c: '#10b981', t: 'Strong 💪' },
+      ];
+      const lvl = val.length === 0 ? 0 : Math.min(strength + 1, 5);
+      fill.style.width = levels[lvl].w;
+      fill.style.background = levels[lvl].c;
+      text.textContent = levels[lvl].t;
+      text.style.color = levels[lvl].c === 'transparent' ? 'rgba(255,255,255,0.3)' : levels[lvl].c;
+    });
+
+// ── ANIMATED EYE BUTTON ──
+    function buildEyeSVG(btn) {
+      if (!btn) return;
+      btn.innerHTML = `
+        <svg class="eye-svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12 C5 5, 19 5, 23 12"/>
+          <path d="M23 12 C19 19, 5 19, 1 12"/>
+          <circle class="eye-iris" cx="12" cy="12" r="3.5"/>
+          <line class="eye-slash" x1="3" y1="3" x2="21" y2="21" stroke-width="2.5"/>
+        </svg>`;
+      btn.classList.add('eye-btn');
+      let open = true;
+      btn.addEventListener('click', () => {
+        open = !open;
+        const inp = btn.closest('.field-wrap, .field')?.querySelector('input');
+        if (inp) inp.type = open ? 'text' : 'password';
+        btn.classList.toggle('closed', !open);
+      });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      buildEyeSVG(document.getElementById('togglePassBtn'));
+    });
+
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast show ${type}`;
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // Override signupForm with better UX (keep full validation logic)
+    document.getElementById('signupForm').addEventListener('submit', e => {
+      e.preventDefault();
+      let valid = true;
+
+      const first = document.getElementById('signupFirst');
+      const last = document.getElementById('signupLast');
+      const email = document.getElementById('signupEmail');
+      const contact = document.getElementById('signupContact');
+      const pass = document.getElementById('signupPass');
+
+      // Clear errors
+      [first, last, email, contact, pass].forEach(i => i.classList.remove('error'));
+      document.querySelectorAll('.field-err').forEach(e => e.classList.remove('show'));
+
+      if (!first.value.trim()) { first.classList.add('error'); document.getElementById('firstErr').classList.add('show'); valid = false; }
+      if (!last.value.trim()) { last.classList.add('error'); document.getElementById('lastErr').classList.add('show'); valid = false; }
+
+      const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRe.test(email.value.trim())) { email.classList.add('error'); document.getElementById('emailErr').classList.add('show'); valid = false; }
+
+      if (contact.value.trim() && contact.value.replace(/\D/g,'').length < 10) {
+        contact.classList.add('error'); document.getElementById('contactErr').classList.add('show'); valid = false;
+      }
+
+      if (pass.value.length < 6) { pass.classList.add('error'); document.getElementById('passErr').classList.add('show'); valid = false; }
+
+      if (!valid) return;
+
+      const name = `${first.value.trim()} ${last.value.trim()}`;
+      const emailVal = email.value.trim().toLowerCase();
+      const contactVal = contact.value.trim();
+      const passVal = pass.value;
+
+      let users = [];
+      try { users = JSON.parse(localStorage.getItem('users') || '[]'); } catch {}
+
+      if (users.find(u => u.email === emailVal)) {
+        email.classList.add('error');
+        showToast('❌ Email already registered. Please login.', 'fail');
+        return;
+      }
+
+      const user = { id: 'u' + Date.now(), name, email: emailVal, contact: contactVal, pass: passVal };
+      users.push(user);
+      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('sessionUser', JSON.stringify({ id: user.id, name, email: emailVal }));
+      localStorage.setItem('userProfile', JSON.stringify({ name, email: emailVal, contact: contactVal, avatar: '' }));
+
+      showToast('✅ Account created! Welcome to FindTrack!', 'success');
+      setTimeout(() => window.location.href = 'app.html', 1300);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>FindTrack — Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button id="burgerBtn" class="burger-btn" aria-label="Menu">☰</button>
+      <div class="brand-wrap">
+        <div class="logo">🔎</div>
+        <div class="brand-text">
+          <div class="brand-title">FindTrack</div>
+          <div class="small-muted">Lost &amp; Found System</div>
+        </div>
+      </div>
+      <div style="width:40px"></div>
+    </div>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="home">🏠 Home</button>
+      <button class="tab-btn" data-tab="report">📦 Report</button>
+      <button class="tab-btn" data-tab="search">🔍 Search</button>
+      <button class="tab-btn" data-tab="notifications">🔔 Alerts</button>
+      <button class="tab-btn" data-tab="profile">👤 Profile</button>
+    </nav>
+  </header>
+
+  <!-- SIDEBAR -->
+  <div id="sidebarOverlay" class="overlay hidden"></div>
+  <aside id="sidebarDrawer" class="sidebar-drawer hidden">
+    <div class="drawer-header">
+      <strong>FindTrack Menu</strong>
+      <button id="closeDrawer">✕</button>
+    </div>
+    <ul class="drawer-menu">
+      <li class="drawer-item" data-section="home">🏠 Home</li>
+      <li class="drawer-item" data-section="report">📦 Report Item</li>
+      <li class="drawer-item" data-section="search">🔍 Search</li>
+      <li class="drawer-item" data-section="notifications">🔔 Alerts</li>
+      <li class="drawer-item" data-section="profile">👤 Profile</li>
+      <hr>
+      <li class="drawer-item" data-section="myitems">📂 My Items</li>
+      <li class="drawer-item" data-section="pinned">📌 Pinned Items</li>
+      <li class="drawer-item" data-section="categories">🏷️ Categories</li>
+      <li class="drawer-item" data-section="analytics">📊 Analytics</li>
+      <hr>
+      <li class="drawer-item" data-section="tips">📚 Recovery Tips</li>
+      <li class="drawer-item" data-section="packaging">📦 Packaging Tips</li>
+      <li class="drawer-item" data-section="about">ℹ️ About / Help</li>
+    </ul>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- HOME -->
+    <section id="home" class="panel active">
+      <!-- Skeleton shown while JS loads -->
+      <div id="homeSkeleton">
+        <div class="skeleton skeleton-welcome"></div>
+        <div style="background:white;border-radius:20px;border:1px solid #e2e8f0;padding:20px;margin-bottom:16px">
+          <div class="skeleton skeleton-title" style="width:40%;height:16px;margin:0 0 16px"></div>
+          <div class="skeleton skeleton-recent"></div>
+          <div class="skeleton skeleton-recent"></div>
+          <div class="skeleton skeleton-recent"></div>
+        </div>
+      </div>
+      <!-- Real content (hidden until loaded) -->
+      <div id="homeContent" style="display:none">
+      <div class="welcome-card">
+        <div class="welcome-left">
+          <p class="muted">Welcome back 👋</p>
+          <h1 id="welcomeUser" class="welcome-title">Hello, Student!</h1>
+          <p class="muted" style="font-size:13px">Here's your activity summary</p>
+        </div>
+        <div class="stats-cards">
+          <div class="stat-card">
+            <div class="stat-icon">📍</div>
+            <div class="stat-label">Lost</div>
+            <div id="countLost" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔍</div>
+            <div class="stat-label">Found</div>
+            <div id="countFound" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-label">Claimed</div>
+            <div id="countClaimed" class="stat-value">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="recent-section">
+        <div class="recent-header">
+          <h3>📋 Recent Reports</h3>
+        </div>
+        <div id="recentList" class="recent-list"></div>
+      </div>
+
+      <div class="tip-banner">💡 Tip: Report lost items within 24 hours for the best chance of recovery!</div>
+      </div><!-- end homeContent -->
+    </section>
+
+    <!-- REPORT -->
+    <section id="report" class="panel">
+      <div class="section-title">📦 Report Lost / Found Item</div>
+      <p class="section-subtitle">Fill in the details below to submit a report. More detail = higher chance of recovery.</p>
+      <div class="report-form-wrap">
+        <form id="reportForm">
+          <div class="form-group">
+            <label for="r_title">Item Title *</label>
+            <input id="r_title" type="text" placeholder="e.g., Blue Nike Backpack" required>
+          </div>
+          <div class="form-group">
+            <label for="r_location">Location</label>
+            <input id="r_location" type="text" placeholder="e.g., Library 2nd Floor">
+          </div>
+          <div class="form-group">
+            <label for="r_desc">Description</label>
+            <textarea id="r_desc" rows="4" placeholder="Add details like color, brand, identifying features..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="r_image">Upload Photo</label>
+            <input id="r_image" type="file" accept="image/*">
+            <img id="imagePreview" class="image-preview" alt="Preview">
+          </div>
+          <div class="form-group">
+            <label for="r_type">Item Status *</label>
+            <select id="r_type">
+              <option value="lost">🔴 Lost Item — I lost this</option>
+              <option value="found">🟢 Found Item — I found this</option>
+            </select>
+          </div>
+          <button class="primary-btn" type="submit">📤 Submit Report</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- SEARCH -->
+    <section id="search" class="panel">
+      <div class="section-title">🔍 Search Items</div>
+      <div class="search-container">
+        <div class="search-bar">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input id="s_query" placeholder="Search by title, description or location...">
+          </div>
+          <select id="s_filter">
+            <option value="all">All Items</option>
+            <option value="lost">Lost Only</option>
+            <option value="found">Found Only</option>
+            <option value="claimed">Claimed</option>
+          </select>
+          <button id="toggleFilters" class="filter-btn">Filters ▾</button>
+        </div>
+        <div id="advancedFilters" class="advanced-filters hidden">
+          <input id="filterLocation" placeholder="📍 Filter by location">
+          <input id="filterDate" type="date">
+        </div>
+      </div>
+      <div id="matchBanner" class="match-banner">
+        <div class="match-banner-title">🤖 Smart Suggestions — Possible matches for your lost item</div>
+        <div class="match-cards" id="matchCards"></div>
+      </div>
+      <div id="searchResults" class="cards-grid"></div>
+      <div id="noResults" class="empty hidden"></div>
+    </section>
+
+    <!-- ITEM DETAIL VIEW -->
+    <section id="itemDetail" class="panel">
+      <button id="backToSearch" class="back-btn">← Back to Search</button>
+      <div id="detailContent" class="detail-container"></div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section id="notifications" class="panel">
+      <div class="section-title">🔔 Notifications &amp; Alerts</div>
+      <div id="alertsList">
+        <div class="alert-item">
+          <strong>🎉 Welcome to FindTrack!</strong>
+          <p>You'll receive notifications here when there are updates on your items.</p>
+        </div>
+        <div class="alert-item">
+          <strong>💡 Pro Tip</strong>
+          <p>Enable browser notifications to get instant alerts about your reported items!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="profile" class="panel">
+      <div class="section-title">👤 My Profile</div>
+      <div class="profile-container">
+        <div class="profile-photo">
+          <img id="pf_avatar" src="https://api.dicebear.com/8.x/avataaars/svg?seed=default" alt="Profile">
+          <input id="pf_avatar_file" type="file" hidden accept="image/*">
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+            <button id="uploadBtn" class="primary-btn" style="width:100%;justify-content:center">📸 Upload Photo</button>
+            <button id="randomAvatar" class="secondary-btn" style="width:100%;justify-content:center">🎲 Random Avatar</button>
+          </div>
+        </div>
+        <div class="profile-fields">
+          <div class="form-group">
+            <label for="pf_name">Full Name</label>
+            <input id="pf_name" placeholder="Enter your full name">
+          </div>
+          <div class="form-group">
+            <label for="pf_email">Email Address</label>
+            <input id="pf_email" type="email" placeholder="your.email@example.com">
+          </div>
+          <div class="form-group">
+            <label for="pf_contact">Contact Number</label>
+            <input id="pf_contact" placeholder="+63 912 345 6789">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:4px">
+            <button id="saveProfile" class="primary-btn">💾 Save Profile</button>
+            <a href="index.html" onclick="localStorage.removeItem('sessionUser')" style="font-size:13px;color:#ef4444;text-decoration:none;font-weight:600;">🚪 Logout</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY ITEMS -->
+    <section id="myitems" class="panel">
+      <div class="section-title">📂 My Items</div>
+      <p class="section-subtitle">All items you've reported — tap to view details</p>
+      <div id="myItemsList" class="cards-grid"></div>
+      <div id="myItemsEmpty" class="empty" style="display:none">You haven't reported any items yet.</div>
+    </section>
+
+    <!-- PINNED -->
+    <section id="pinned" class="panel">
+      <div class="section-title">📌 Pinned Items</div>
+      <p class="section-subtitle">Quick access to items you've bookmarked</p>
+      <div id="pinnedList" class="cards-grid"></div>
+      <div id="pinnedEmpty" class="empty" style="display:none">No pinned items yet. Pin items from search!</div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section id="categories" class="panel">
+      <div class="section-title">🏷️ Browse by Category</div>
+      <p class="section-subtitle">Tap a category to filter lost items</p>
+      <div class="cards-grid">
+        <div class="card-item clickable" onclick="filterByCategory('bags')">
+          <div class="card-media" style="font-size:60px">🎒</div>
+          <div class="card-title">Bags &amp; Backpacks</div>
+          <div class="card-desc">Backpacks, purses, wallets, luggage</div>
+        </div>
+        <div class="card-item clickable" onclick="filterByCategory('electronics')">
+          <div class="card-media" style="font-size:60px">📱</div>
+          <div class="card-title">Electronics</div>
+          <div class="card-desc">Phones, laptops, tablets, chargers</div>
+        </div>
+        <div class="card-item clickable" onclick="filterByCategory('books')">
+          <div class="card-media" style="font-size:60px">📚</div>
+          <div class="card-title">Books &amp; Stationery</div>
+          <div class="card-desc">Textbooks, notebooks, IDs, pens</div>
+        </div>
+        <div class="card-item clickable" onclick="filterByCategory('clothing')">
+          <div class="card-media" style="font-size:60px">👕</div>
+          <div class="card-title">Clothing &amp; Accessories</div>
+          <div class="card-desc">Jackets, uniforms, glasses, watches</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section id="analytics" class="panel">
+      <div class="section-title">📊 Analytics Dashboard</div>
+      <p class="section-subtitle">Visual overview of all reported items</p>
+      <div class="analytics-grid" id="analyticsGrid"></div>
+      <div style="background:white;padding:24px;border-radius:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border)">
+        <canvas id="chartCanvas" width="400" height="220" style="max-width:100%;display:block;margin:0 auto"></canvas>
+        <p style="text-align:center;color:var(--muted);font-size:13px;margin-top:14px">Item distribution by status</p>
+      </div>
+    </section>
+
+    <!-- TIPS -->
+    <section id="tips" class="panel">
+      <div class="section-title">📚 Lost Item Recovery Guide</div>
+      <p class="section-subtitle">Helpful tips to increase your chances of finding lost items</p>
+      <div class="tips-grid">
+        <div class="tip-card">🏃 <strong>Retrace Your Steps</strong><br><br>Go back through your route from the last few hours.</div>
+        <div class="tip-card">🏢 <strong>Check Key Locations</strong><br><br>Visit Library, Cafeteria, Security Office, and Classrooms.</div>
+        <div class="tip-card">📱 <strong>Use Digital Tools</strong><br><br>Post on forums, use FindTrack, check social media groups.</div>
+        <div class="tip-card">🕒 <strong>Act Quickly</strong><br><br>Report and search within 2 hours for best results.</div>
+        <div class="tip-card">📸 <strong>Add Photos</strong><br><br>Upload a photo of your item for much faster identification.</div>
+        <div class="tip-card">📞 <strong>Contact Security</strong><br><br>Campus security offices collect found items daily.</div>
+      </div>
+    </section>
+
+    <!-- PACKAGING TIPS -->
+    <section id="packaging" class="panel">
+      <div class="section-title">📦 Packaging &amp; Handling Tips</div>
+      <p class="section-subtitle">Best practices for securing found items</p>
+      <div class="tips-grid">
+        <div class="tip-card">🧴 <strong>Protect Fragile Items</strong><br><br>Use bubble wrap or padding for delicate objects.</div>
+        <div class="tip-card">🎁 <strong>Seal Securely</strong><br><br>Ensure items are properly contained before storage.</div>
+        <div class="tip-card">📏 <strong>Label Clearly</strong><br><br>Add your name, contact info, and date item was found.</div>
+        <div class="tip-card">🕒 <strong>Update Status</strong><br><br>Mark items as claimed once they've been recovered.</div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="panel">
+      <div class="section-title">ℹ️ About FindTrack</div>
+      <div class="report-form-wrap" style="max-width:600px">
+        <p style="margin-bottom:16px;line-height:1.7"><strong>FindTrack</strong> is a comprehensive campus lost and found management system designed to help students and staff quickly report, search for, and recover lost items.</p>
+        <div class="section-title" style="font-size:16px;margin-top:8px">📖 How to Use</div>
+        <div class="tips-grid" style="grid-template-columns:1fr">
+          <div class="tip-card">📦 <strong>Report</strong> — Submit details about lost or found items with photos and location</div>
+          <div class="tip-card">🔍 <strong>Search</strong> — Browse all reported items with advanced filters and category browsing</div>
+          <div class="tip-card">✅ <strong>Claim</strong> — Mark items as found once recovered, or delete your own reports</div>
+          <div class="tip-card">📌 <strong>Pin</strong> — Bookmark items you want quick access to</div>
+        </div>
+        <div class="tip-banner" style="margin-top:16px">💡 Pro Tip: The more detail you add to reports, the faster items get matched!</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ONBOARDING OVERLAY -->
+  <div id="onboardOverlay" class="onboard-overlay hidden">
+    <div class="onboard-card" id="onboardCard">
+      <div class="onboard-progress" id="onboardProgress"></div>
+      <div class="onboard-visual">
+        <div class="onboard-icon-wrap" id="onboardIcon"></div>
+      </div>
+      <div class="onboard-body">
+        <div class="onboard-step-label" id="onboardLabel"></div>
+        <div class="onboard-title"   id="onboardTitle"></div>
+        <div class="onboard-desc"    id="onboardDesc"></div>
+        <div class="onboard-actions">
+          <button class="onboard-next" id="onboardNext">Next →</button>
+          <button class="onboard-skip" id="onboardSkip">Skip tour</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMAGE ZOOM OVERLAY -->
+  <div id="zoomOverlay" class="zoom-overlay hidden">
+    <button class="zoom-close" id="zoomClose">✕</button>
+    <img id="zoomImg" class="zoom-img" src="" alt="Zoomed view">
+    <div class="zoom-hint">Tap anywhere to close</div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="bnav-btn active" data-tab="home">
+      <span class="bnav-icon">🏠</span>Home
+    </button>
+    <button class="bnav-btn" data-tab="search">
+      <span class="bnav-icon">🔍</span>Search
+    </button>
+    <button class="bnav-btn" data-tab="notifications">
+      <span class="bnav-icon">🔔</span>Alerts
+    </button>
+    <button class="bnav-btn" data-tab="profile">
+      <span class="bnav-icon">👤</span>Profile
+    </button>
+  </nav>
+
+  <!-- REPORT FAB (mobile) -->
+  <button class="report-fab" id="reportFab" title="Report Item">📦</button>
+
+  <!-- GUEST MODAL -->
+  <div id="guestModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-icon">🔒</div>
+      <h2>Login Required</h2>
+      <p>Please login or sign up to unlock the full features of FindTrack!</p>
+      <div class="modal-buttons">
+        <a href="login.html" class="modal-btn primary">🔐 Login</a>
+        <a href="signup.html" class="modal-btn secondary">📝 Sign Up</a>
+      </div>
+      <button id="closeModal" class="modal-close">Maybe later</button>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
