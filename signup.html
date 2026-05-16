@@ -235,7 +235,7 @@
     }
 
     // Override signupForm with better UX (keep full validation logic)
-    document.getElementById('signupForm').addEventListener('submit', e => {
+    document.getElementById('signupForm').addEventListener('submit', async e => {
       e.preventDefault();
       let valid = true;
 
@@ -268,24 +268,48 @@
       const contactVal = contact.value.trim();
       const passVal = pass.value;
 
-      let users = [];
-      try { users = JSON.parse(localStorage.getItem('users') || '[]'); } catch {}
+      try {
 
-      if (users.find(u => u.email === emailVal)) {
-        email.classList.add('error');
-        showToast('❌ Email already registered. Please login.', 'fail');
-        return;
-      }
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    emailVal,
+    passVal
+  );
 
-      const user = { id: 'u' + Date.now(), name, email: emailVal, contact: contactVal, pass: passVal };
-      users.push(user);
-      localStorage.setItem('users', JSON.stringify(users));
-      localStorage.setItem('sessionUser', JSON.stringify({ id: user.id, name, email: emailVal }));
-      localStorage.setItem('userProfile', JSON.stringify({ name, email: emailVal, contact: contactVal, avatar: '' }));
+  const user = userCredential.user;
 
-      showToast('✅ Account created! Welcome to FindTrack!', 'success');
-      setTimeout(() => window.location.href = 'app.html', 1300);
-    });
+  localStorage.setItem('sessionUser', JSON.stringify({
+    id: user.uid,
+    name,
+    email: emailVal
+  }));
+
+  localStorage.setItem('userProfile', JSON.stringify({
+    name,
+    email: emailVal,
+    contact: contactVal,
+    avatar: ''
+  }));
+
+  showToast('✅ Account created successfully!', 'success');
+
+  setTimeout(() => {
+    window.location.href = 'app.html';
+  }, 1300);
+
+} catch (error) {
+
+  console.error(error);
+
+  if (error.code === 'auth/email-already-in-use') {
+    showToast('❌ Email already registered.', 'fail');
+  } else if (error.code === 'auth/weak-password') {
+    showToast('❌ Password should be at least 6 characters.', 'fail');
+  } else {
+    showToast('❌ Signup failed. Try again.', 'fail');
+  }
+
+}
   </script>
 </body>
 </html>
