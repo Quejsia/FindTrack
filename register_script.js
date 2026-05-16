@@ -1,3 +1,22 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBVh_L9rnFwYJ8V0en1SG7uVwXAfJFoZG8",
+  authDomain: "findtrack-17dee.firebaseapp.com",
+  projectId: "findtrack-17dee",
+  storageBucket: "findtrack-17dee.firebasestorage.app",
+  messagingSenderId: "855009692879",
+  appId: "1:855009692879:web:cb680475e9446491353bba"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app); 
 /* Complete auth with FULL validation for login & signup */
 document.addEventListener("DOMContentLoaded", ()=>{
   const signupForm = document.getElementById("signupForm");
