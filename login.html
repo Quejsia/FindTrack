@@ -250,7 +250,7 @@
       buildEyeSVG(document.getElementById('togglePassBtn'));
     });
 
-    document.getElementById('loginForm').addEventListener('submit', e => {
+    document.getElementById('loginForm').addEventListener('submit', async e => {
       e.preventDefault();
       let valid = true;
 
@@ -271,19 +271,37 @@
       }
       if (!valid) return;
 
-      let users = [];
-      try { users = JSON.parse(localStorage.getItem('users') || '[]'); } catch {}
+      try {
 
-      const matched = users.find(u => u.email === email.value.trim().toLowerCase() && u.pass === pass.value);
-      if (matched) {
-        localStorage.setItem('sessionUser', JSON.stringify({ id: matched.id, name: matched.name, email: matched.email }));
-        localStorage.setItem('userProfile', JSON.stringify({ name: matched.name, email: matched.email, contact: matched.contact || '', avatar: '' }));
-        showToast('✅ Login successful! Redirecting...', 'success');
-        setTimeout(() => window.location.href = 'app.html', 1200);
-      } else {
-        showToast('❌ Invalid email or password. Please try again.', 'fail');
-        email.classList.add('error'); pass.classList.add('error');
-      }
+  const userCredential = await signInWithEmailAndPassword(
+    auth,
+    email.value.trim(),
+    pass.value
+  );
+
+  const user = userCredential.user;
+
+  localStorage.setItem('sessionUser', JSON.stringify({
+    id: user.uid,
+    email: user.email
+  }));
+
+  showToast('✅ Login successful! Redirecting...', 'success');
+
+  setTimeout(() => {
+    window.location.href = 'app.html';
+  }, 1200);
+
+} catch (error) {
+
+  console.error(error);
+
+  showToast('❌ Invalid email or password. Please try again.', 'fail');
+
+  email.classList.add('error');
+  pass.classList.add('error');
+
+}
     });
   </script>
 </body>
