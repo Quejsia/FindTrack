@@ -47,6 +47,24 @@ document.getElementById("reportForm").addEventListener("submit", async (e) => {
     alert("Failed to submit report ❌");
   }
 });
+
+onSnapshot(collection(db, "reports"), (snapshot) => {
+  const list = document.getElementById("recentList");
+
+  list.innerHTML = "";
+
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+
+    list.innerHTML += `
+      <div class="report-card">
+        <h3>${data.title}</h3>
+        <p>${data.location || ""}</p>
+        <small>${data.status}</small>
+      </div>
+    `;
+  });
+});
 // FindTrack v2 — Complete App Script
 const LS_REPORTS = "reports";
 const LS_PROFILE = "userProfile";
