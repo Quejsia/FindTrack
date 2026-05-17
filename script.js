@@ -19,6 +19,34 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
+
+document.getElementById("reportForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const title = document.getElementById("r_title").value;
+  const location = document.getElementById("r_location").value;
+  const desc = document.getElementById("r_desc").value;
+  const type = document.getElementById("r_type").value;
+
+  try {
+    await addDoc(collection(db, "reports"), {
+      title: title,
+      location: location,
+      description: desc,
+      status: type,
+      createdAt: new Date()
+    });
+
+    alert("Report submitted successfully ✅");
+
+    // reset form
+    document.getElementById("reportForm").reset();
+
+  } catch (error) {
+    console.error("Error adding report: ", error);
+    alert("Failed to submit report ❌");
+  }
+});
 // FindTrack v2 — Complete App Script
 const LS_REPORTS = "reports";
 const LS_PROFILE = "userProfile";
