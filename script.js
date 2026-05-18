@@ -4,7 +4,8 @@ from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import {
   getFirestore,
   collection,
-  addDoc
+  addDoc,
+ onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const firebaseConfig = {
