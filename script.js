@@ -5,6 +5,7 @@ import {
   getFirestore,
   collection,
   addDoc,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -261,37 +262,74 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ── RECENT ────────────────────────────────────────────────────
-  function renderRecent() {
-    const out = document.getElementById("recentList"); if (!out) return;
+  async function renderRecent() {
+  const out = document.getElementById("recentList");
+  if (!out) return;
 
-    if (!isLoggedIn()) {
-      out.innerHTML = `<div style="text-align:center;padding:24px;color:#94a3b8;font-size:14px">Please login to view your recent reports</div>`;
-      return;
-    }
+  out.innerHTML = `<div style="padding:20px;text-align:center;color:#94a3b8">Loading reports...</div>`;
 
-    const list = lsRead(LS_REPORTS).sort((a, b) => b.createdAt - a.createdAt).slice(0, 6);
+  try {
+    const querySnapshot = await getDocs(collection(db, "reports"));
+
+    let list = [];
+
+    querySnapshot.forEach((doc) => {
+      list.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    list.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds);
+
+    list = list.slice(0, 6);
+
     if (list.length === 0) {
-      out.innerHTML = `<div style="text-align:center;padding:24px;color:#94a3b8;font-size:14px">No reports yet — start by reporting an item! 📦</div>`;
+      out.innerHTML = `
+        <div style="text-align:center;padding:24px;color:#94a3b8;font-size:14px">
+          No reports yet — start by reporting an item! 📦
+        </div>
+      `;
       return;
     }
+
     out.innerHTML = "";
+
     list.forEach(r => {
       const item = document.createElement("div");
+
       item.className = "recent-item";
-      item.onclick = () => showItemDetail(r.id);
+
       item.innerHTML = `
         <div class="recent-thumb">
           ${r.image ? `<img src="${r.image}" alt="">` : (r.type === "lost" ? "📍" : "🔍")}
         </div>
+
         <div class="recent-info">
-          <div class="recent-title">${escapeHtml(r.title)}</div>
-          <div class="recent-meta">${escapeHtml(r.location || "Location unknown")} · ${nowStr(r.createdAt)}</div>
+          <div class="recent-title">${r.title}</div>
+          <div class="recent-meta">
+            ${r.location || "Location unknown"}
+          </div>
         </div>
-        <div class="badge ${r.claimed ? "claimed" : r.type}">${r.claimed ? "CLAIMED" : r.type.toUpperCase()}</div>
+
+        <div class="badge ${r.claimed ? "claimed" : r.type}">
+          ${r.claimed ? "CLAIMED" : r.type.toUpperCase()}
+        </div>
       `;
+
       out.appendChild(item);
     });
+
+  } catch (err) {
+    console.error(err);
+
+    out.innerHTML = `
+      <div style="padding:20px;text-align:center;color:red">
+        Failed to load reports
+      </div>
+    `;
   }
+}
 
   // ── SEARCH ────────────────────────────────────────────────────
   const sQuery = document.getElementById("s_query");
