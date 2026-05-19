@@ -280,8 +280,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    list.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds);
+    list.sort((a, b) => {
+  const aTime = a.createdAt?.seconds || 0;
+  const bTime = b.createdAt?.seconds || 0;
 
+  return bTime - aTime;
+});
     list = list.slice(0, 6);
 
     if (list.length === 0) {
