@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 catch (err) {
   console.error("RECENT REPORT ERROR:", err);
-
+     alert(err.message);
   out.innerHTML = `
     <div style="padding:20px;text-align:center;color:red">
       Failed to load reports
