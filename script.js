@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
   out.innerHTML = `<div style="padding:20px;text-align:center;color:#94a3b8">Loading reports...</div>`;
 
   try {
-    const querySnapshot = await getDocs(collection(db, "reports"));
+    const querySnapshot = { forEach: () => {} };
 
     let list = [];
 
