@@ -323,16 +323,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       out.appendChild(item);
     });
+catch (err) {
+  console.error("RECENT REPORT ERROR:", err);
 
-  } catch (err) {
-    console.error(err);
-
-    out.innerHTML = `
-      <div style="padding:20px;text-align:center;color:red">
-        Failed to load reports
-      </div>
-    `;
-  }
+  out.innerHTML = `
+    <div style="padding:20px;text-align:center;color:red">
+      Failed to load reports
+    </div>
+  `;
 }
 
   // ── SEARCH ────────────────────────────────────────────────────
